@@ -13,3 +13,9 @@ BATTLE_NET_API = "https://eu.api.battle.net/wow/character/"
 IPs
 '''
 SIMC_IP = "192.168.100.2"
+
+'''
+MISC
+'''
+GITHUB_REPO_URL = "https://github.com/Seryth/wow-discord-bot-python/"
+GITHUB_REPO_API_URL = "https://api.github.com/repos/Seryth/wow-discord-bot-python/"

@@ -1,4 +1,0 @@
-'''
-Development
-'''
-DEV_ = "<yourkey>"

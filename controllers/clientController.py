@@ -24,7 +24,7 @@ async def workinProgress(messageDAO):
     for i in range(3):
         messageText+="."
         msgObj = await client.edit_message(msgObj, messageText)
-        asyncio.sleep(10)
+        await asyncio.sleep(1)
 
 
     #await workinProgress()
