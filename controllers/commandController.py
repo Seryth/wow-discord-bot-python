@@ -31,6 +31,8 @@ def processor(botParameter, commandTree, messageDAO):
 			return info.giphy(botParameter)
 		elif commandKey == "api":
 		 	return api.process(botParameter,messageDAO) 
+		elif commandKey == "git":
+		 	return info.latestCommit()
 		else:
 		 	return howTo()
 	else:

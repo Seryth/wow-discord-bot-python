@@ -1,6 +1,8 @@
 from controllers import clientController
 from controllers import commandController
+from controllers import infoController
 from const import TOKENS
+
 
 def runClient():
     try:
