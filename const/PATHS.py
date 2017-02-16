@@ -2,7 +2,7 @@
 Filepaths
 '''
 BASE_PATH = "."
-PROCESS_JSON_PATH = "cmds/replies.json"
+PROCESS_JSON_PATH = "cmds/replyKeys.json"
 
 '''
 API-Paths

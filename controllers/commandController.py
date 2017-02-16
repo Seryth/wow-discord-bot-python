@@ -1,10 +1,10 @@
 import json
 from controllers import apiController as api
+from controllers import infoController as info
 from const import PATHS
 
 def validate(messageStr):
 	global commandList, key, commandTree, isValid
-
 	commandList = messageStr.split()
 	key = commandList[0]
 	commandTree = json.loads(open(PATHS.PROCESS_JSON_PATH, encoding='utf-8').read())
@@ -13,23 +13,32 @@ def validate(messageStr):
 	return isValid
 
 async def parse(messageDAO):
-	processorKey = commandTree[key]["processor"]
-	del commandTree[key]["processor"]
-	subKey = "default" if len(commandList)<2  else commandList[1]
-	return processor(processorKey,commandTree[key],subKey,messageDAO)
-
-def processor(processorKey, tree, treeKey, messageDAO):
-	if treeKey in tree.keys():
-		if processorKey == "plain":
-			return replaceKeys(tree[treeKey],messageDAO)
-		elif processorKey == "api":
-		 	return api.process(tree,treeKey,messageDAO) 
-		else:
-		 	return "undefined"
+	messageList = messageDAO.content.split()
+	botKey = messageList[0]
+	botTree = json.loads(open(PATHS.PROCESS_JSON_PATH, encoding='utf-8').read())
+	if botKey in botTree.keys():
+		return processor(messageList[1:],botTree[botKey],messageDAO)
 	else:
-		return replaceKeys(tree['default'],messageDAO)
+		return None
 
-def replaceKeys(response,messageDAO):
-    return response\
-        .replace("@user@", messageDAO.author.name)\
-        .replace("@usermention@", messageDAO.author.mention)
+def processor(botParameter, commandTree, messageDAO):
+	commandKey = "help" if len(botParameter)<1  else botParameter[0]
+	botParameter = botParameter[1:]
+	if commandKey in commandTree:
+		if commandKey == "help":
+			return howTo()
+		elif commandKey == "hello":
+			return "Hello "+ messageDAO.author.name
+		elif commandKey == "joke":
+			return info.joke()
+		elif commandKey == "giphy":
+			return info.giphy(botParameter)
+		elif commandKey == "api":
+		 	return api.process(botParameter) 
+		else:
+		 	return howTo()
+	else:
+		return howTo()
+
+def howTo():
+	return "usage:\n"
