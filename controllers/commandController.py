@@ -38,6 +38,6 @@ def processor(botParameter, commandTree, messageDAO):
 	
 	return result
 
-async def howTo():
+def howTo():
 	return "usage:\n"
 
