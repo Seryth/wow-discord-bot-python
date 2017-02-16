@@ -1,23 +1,26 @@
 import requests
 import json
+import asyncio
 
-def process(subtree, key, messageDAO):
-    a = traits(messageDAO)
-    return a
-
-    options = \
-        {"tc1":traits(messageDAO),
-         "tc2":relics
-        }
-
-    try:
-        a = options[subtree[key]]()
-    except:
-        a = "error"
-    
-    return a
+def process(subtree, messageDAO):
+	key = "usage" if len(subtree) == 0 else subtree[0]
+	subtree = subtree[1:]
+	return processCall(key,messageDAO)
     
     
+def processCall(key,messageDAO):
+	result = ""
+	if key == "tc1":
+		return traits(messageDAO)
+	elif key == "tc2":
+		return relics()
+	else:
+		return usage()
+	
+
+def usage():
+	return "usage:"
+
 def traits(messageDAO):
     n = messageDAO.author.name
 
@@ -53,6 +56,7 @@ def traits(messageDAO):
         relicname = data['name']
         completemsg += relicname + "\n"
 
+        #asyncio.sleep(5)
     return completemsg + "```"
 
 def relics():

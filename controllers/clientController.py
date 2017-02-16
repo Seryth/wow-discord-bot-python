@@ -1,5 +1,6 @@
 from discord import Client
 from controllers import commandController as commands
+import asyncio
 
 client = Client()
 
@@ -9,12 +10,24 @@ async def on_message(messageDAO):
         return
 
     if(commands.validate(messageDAO.content)):
-        msgObj = await client.send_message(messageDAO.channel, "iamworking")
-        replyObj = await commands.parse(messageDAO)   
+        await workinProgress(messageDAO)
         
+        replyObj = commands.parse(messageDAO)   
+        print(replyObj)
         if replyObj != None:  
             await client.send_message(messageDAO.channel, replyObj)
-            await client.delete_message(msgObj)
+            #await client.delete_message(msgObj)
+
+async def workinProgress(messageDAO):
+    messageText = "iamworking"
+    msgObj = await client.send_message(messageDAO.channel, messageText)
+    for i in range(3):
+        messageText+="."
+        msgObj = await client.edit_message(msgObj, messageText)
+        asyncio.sleep(10)
+
+
+    #await workinProgress()
 
 
 @client.event   
