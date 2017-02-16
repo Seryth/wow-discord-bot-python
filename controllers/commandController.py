@@ -3,19 +3,23 @@ from controllers import apiController as api
 from controllers import infoController as info
 from const import PATHS
 
+def validate(messageStr):
+	global commandList, key, commandTree, isValid
+	commandList = messageStr.split()
+	key = commandList[0]
+	commandTree = json.loads(open(PATHS.PROCESS_JSON_PATH, encoding='utf-8').read())
+	isValid = True if key in commandTree.keys() else False
+	
+	return isValid
 
 def parse(messageDAO):
 	messageList = messageDAO.content.split()
-	botKey = messageList[0]
-	botTree = json.loads(open(PATHS.PROCESS_JSON_PATH, encoding='utf-8').read())
-	if botKey in botTree.keys():
-		return processor(messageList[1:],botTree[botKey],messageDAO)
-	else:
-		return None
+	return processor(messageList[1:],commandTree[key],messageDAO)
 
 def processor(botParameter, commandTree, messageDAO):
 	commandKey = "help" if len(botParameter)<1  else botParameter[0]
 	botParameter = botParameter[1:]
+	result = ""
 	if commandKey in commandTree:
 		if commandKey == "help":
 			return howTo()
@@ -26,11 +30,14 @@ def processor(botParameter, commandTree, messageDAO):
 		elif commandKey == "giphy":
 			return info.giphy(botParameter)
 		elif commandKey == "api":
-		 	return api.process(botParameter) 
+		 	return api.process(botParameter,messageDAO) 
 		else:
 		 	return howTo()
 	else:
 		return howTo()
+	
+	return result
 
-def howTo():
+async def howTo():
 	return "usage:\n"
+

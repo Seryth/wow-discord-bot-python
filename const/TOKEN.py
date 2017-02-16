@@ -1,0 +1,4 @@
+'''
+Development
+'''
+DEV_ = "<yourkey>"

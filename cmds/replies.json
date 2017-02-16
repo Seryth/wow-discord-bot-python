@@ -11,8 +11,8 @@
 	"call":{
 		"processor":"api",
 		"default": "api - default",
-		"api1": "api - testCall1",
-		"api2": "api - testCall2"
+		"api1": "tc1",
+		"api2": "tc2"
 	},
 	"traits":{
 
