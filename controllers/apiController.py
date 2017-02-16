@@ -36,7 +36,7 @@ def processCall(key,messageDAO):
     
 
 def usage():
-    return "usage:\n`!bot api <command> <username> <optional:realm, default:" + MISC.DEFAULT_REALM + ">`"
+    return "usage: `!bot api <command> <username> <optional:realm, default:" + MISC.DEFAULT_REALM + ">`"
 
 def ilvl(messageDAO):
     n = messageDAO.author.name
