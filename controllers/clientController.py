@@ -15,8 +15,7 @@ async def on_message(messageDAO):
 @client.event   
 async def on_ready():
     print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
+    print(client.user.name + "("+client.user.id+")")
     print('------')
 
 

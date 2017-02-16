@@ -1,32 +1,36 @@
 import json
 from controllers import apiController as api
+from controllers import infoController as info
 from const import PATHS
 
 
 def parse(messageDAO):
-	commandList = messageDAO.content.split()
-	key = commandList[0]
-	commandTree = json.loads(open(PATHS.PROCESS_JSON_PATH, encoding='utf-8').read())
-	if key in commandTree.keys():
-		processorKey = commandTree[key]["processor"]
-		del commandTree[key]["processor"]
-		subKey = "default" if len(commandList)<2  else commandList[1]
-		return processor(processorKey,commandTree[key],subKey,messageDAO)
+	messageList = messageDAO.content.split()
+	botKey = messageList[0]
+	botTree = json.loads(open(PATHS.PROCESS_JSON_PATH, encoding='utf-8').read())
+	if botKey in botTree.keys():
+		return processor(messageList[1:],botTree[botKey],messageDAO)
 	else:
 		return None
 
-def processor(processorKey, tree, treeKey, messageDAO):
-	if treeKey in tree.keys():
-		if processorKey == "plain":
-			return replaceKeys(tree[treeKey],messageDAO)
-		elif processorKey == "api":
-		 	return api.process(tree,treeKey) 
+def processor(botParameter, commandTree, messageDAO):
+	commandKey = "help" if len(botParameter)<1  else botParameter[0]
+	botParameter = botParameter[1:]
+	if commandKey in commandTree:
+		if commandKey == "help":
+			return howTo()
+		elif commandKey == "hello":
+			return "Hello "+ messageDAO.author.name
+		elif commandKey == "joke":
+			return info.joke()
+		elif commandKey == "giphy":
+			return info.giphy(botParameter)
+		elif commandKey == "api":
+		 	return api.process(botParameter) 
 		else:
-		 	return "undefined"
+		 	return howTo()
 	else:
-		return replaceKeys(tree['default'],messageDAO)
+		return howTo()
 
-def replaceKeys(response,messageDAO):
-    return response\
-        .replace("@user@", messageDAO.author.name)\
-        .replace("@usermention@", messageDAO.author.mention)
+def howTo():
+	return "usage:\n"
