@@ -1,2 +1,2 @@
-def process(subtree, key):
-	return "processing..."+"["+key+"]"
+def process(subtree):
+	return "processing..."
