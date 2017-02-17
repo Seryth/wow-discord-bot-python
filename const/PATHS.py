@@ -7,7 +7,8 @@ PROCESS_JSON_PATH = "cmds/replyKeys.json"
 '''
 API-Paths
 '''
-BATTLE_NET_API = "https://eu.api.battle.net/wow/character/"
+WOW_API_CHARACTER_URL = 'api.battle.net/wow/character/'
+WOW_API_ITEM_URL = 'api.battle.net/wow/item/'
 
 '''
 IPs

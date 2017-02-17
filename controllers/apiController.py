@@ -2,6 +2,7 @@ import requests
 import json
 import asyncio
 from const import MISC
+from const import PATHS
 
 paramName = ""
 paramRealm = ""
@@ -39,11 +40,7 @@ def usage():
     return "usage: `!bot api <command> <username> <optional:realm, default:" + MISC.DEFAULT_REALM + ">`"
 
 def ilvl(messageDAO):
-    n = messageDAO.author.name
-    print(paramName)
-    print(paramRealm)
-
-    url = 'https://'+MISC.DEFAULT_SERVER+'.api.battle.net/wow/character/' + paramRealm + "/" + paramName
+    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + paramRealm + "/" + paramName
 
     params = dict(
         fields="items",
@@ -58,12 +55,8 @@ def ilvl(messageDAO):
     return 'iLvl for: **' + paramRealm+"/" + paramName + "**:`" + str(ilvl) + "`"
 
 def relics(messageDAO):
-    n = messageDAO.author.name
-    print(paramName)
-    print(paramRealm)
-
-    url = 'https://'+MISC.DEFAULT_SERVER+'.api.battle.net/wow/character/' + paramRealm + "/" + paramName
-
+    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + paramRealm + "/" + paramName
+    print(url)
     params = dict(
         fields="items",
         locale="en_GB",
@@ -81,8 +74,8 @@ def relics(messageDAO):
 
     completemsg = 'Relics for: **' + paramRealm+"/"+paramName + '** ```'
 
-    for member in relics:
-        url = 'https://eu.api.battle.net/wow/item/' + str(member['itemId'])
+    for relic in relics:
+        url =  'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_ITEM_URL + str(relic['itemId'])
 
         params = dict(
             locale="en_GB",
@@ -99,7 +92,8 @@ def relics(messageDAO):
 
 def traits(messageDAO):
     totalranks = 0
-    url = 'https://'+MISC.DEFAULT_SERVER+'.api.battle.net/wow/character/' + paramRealm + "/" + paramName
+    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + paramRealm + "/" + paramName
+
     params = dict(
         fields="items",
         locale="en_GB",
@@ -108,18 +102,14 @@ def traits(messageDAO):
 
     resp = requests.get(url=url, params=params)
     data = json.loads(resp.content)
-    ilvl = data['items']['averageItemLevel'] 
 
     if(len(data['items']['mainHand']['artifactTraits']) > 0):
         traits = data['items']['mainHand']['artifactTraits']
     else:
         traits = data['items']['offHand']['artifactTraits']
   
-    for member in traits:
-        totalranks += member['rank']
-
-    #await client.send_message(channel, "Found a total of **" + str(totalranks) + "** points spent.")
-    #await client.edit_message(msg, "Processing spellIDs. Will take some seconds.")
+    for trait in traits:
+        totalranks += trait['rank']
 
     f = open('lookup/traits.json', 'r')
     a = f.read()
@@ -127,7 +117,7 @@ def traits(messageDAO):
     f.close()
 
     totalranks -= 3
-    completemsg = 'Traits for: **'  + paramRealm+"/"+paramName + '** (**' + str(totalranks) + ' points spent**) \n' + '```'
+    completemsg = 'Traits for: **'  + paramRealm + "/" + paramName + '** (**' + str(totalranks) + ' points spent**) \n' + '```'
 
     for member in traits:
         url = 'https://eu.api.battle.net/wow/spell/' + str(lookupdict[str(member['id'])][0])
