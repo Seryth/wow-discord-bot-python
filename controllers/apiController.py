@@ -8,8 +8,6 @@ paramName = ""
 paramRealm = ""
 
 def process(subtree, messageDAO):
-    global paramName, paramRealm
-
     key = "usage" if len(subtree) == 0 else subtree[0]
     
     try:
@@ -22,16 +20,17 @@ def process(subtree, messageDAO):
     except:
         paramRealm = MISC.DEFAULT_REALM
     
-    return processCall(key,messageDAO)
+    charParams = {'name':paramName, 'realm':paramRealm}
+    return processCall(key, charParams)
     
     
-def processCall(key,messageDAO):  
+def processCall(key, charParams):  
     if key == "relics":
-        return relics(messageDAO)
+        return getRelics(charParams)
     elif key == "traits":
-        return traits(messageDAO)
+        return getTraits(charParams)
     elif key == "ilvl":
-        return ilvl(messageDAO)
+        return getIlvl(charParams)
     else:
         return usage()
     
@@ -39,8 +38,8 @@ def processCall(key,messageDAO):
 def usage():
     return "usage: `!bot api <command> <username> <optional:realm, default:" + MISC.DEFAULT_REALM + ">`"
 
-def ilvl(messageDAO):
-    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + paramRealm + "/" + paramName
+def getIlvl(charParams):
+    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + charParams['realm'] + "/" + charParams['name']
 
     params = dict(
         fields="items",
@@ -52,10 +51,10 @@ def ilvl(messageDAO):
     data = json.loads(resp.content)
     ilvl = data['items']['averageItemLevel']
 
-    return 'iLvl for: **' + paramRealm+"/" + paramName + "**:`" + str(ilvl) + "`"
+    return 'iLvl for: **' + charParams['realm'] + "/" + charParams['name'] + "**:`" + str(ilvl) + "`"
 
-def relics(messageDAO):
-    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + paramRealm + "/" + paramName
+def getRelics(charParams):
+    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + charParams['realm'] + "/" + charParams['name']
     print(url)
     params = dict(
         fields="items",
@@ -72,7 +71,7 @@ def relics(messageDAO):
     else:
         relics = data['items']['offHand']['relics']
 
-    completemsg = 'Relics for: **' + paramRealm+"/"+paramName + '** ```'
+    completemsg = 'Relics for: **' + charParams['realm'] + "/" + charParams['name'] + '** ```'
 
     for relic in relics:
         url =  'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_ITEM_URL + str(relic['itemId'])
@@ -87,12 +86,11 @@ def relics(messageDAO):
         relicname = data['name']
         completemsg += relicname + "\n"
 
-        #asyncio.sleep(5)
     return completemsg + "```"
 
-def traits(messageDAO):
+def getTraits(charParams):
     totalranks = 0
-    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + paramRealm + "/" + paramName
+    url = 'https://' + MISC.DEFAULT_SERVER + "." + PATHS.WOW_API_CHARACTER_URL + charParams['realm'] + "/" + charParams['name']
 
     params = dict(
         fields="items",
@@ -111,16 +109,17 @@ def traits(messageDAO):
     for trait in traits:
         totalranks += trait['rank']
 
-    f = open('lookup/traits.json', 'r')
-    a = f.read()
-    lookupdict = json.loads(a)
-    f.close()
+    lookupFile = open('lookup/traits.json', 'r')
+    lookupContent = lookupFile.read()
+    lookupFile.close()
 
+    lookupDict = json.loads(lookupContent)
+    
     totalranks -= 3
-    completemsg = 'Traits for: **'  + paramRealm + "/" + paramName + '** (**' + str(totalranks) + ' points spent**) \n' + '```'
+    completemsg = 'Traits for: **'  + charParams['realm'] + "/" + charParams['name'] + '** (**' + str(totalranks) + ' points spent**) \n' + '```'
 
-    for member in traits:
-        url = 'https://eu.api.battle.net/wow/spell/' + str(lookupdict[str(member['id'])][0])
+    for trait in traits:
+        url = 'https://eu.api.battle.net/wow/spell/' + str(lookupDict[str(trait['id'])][0])
 
         params = dict(
             locale="en_GB",
@@ -130,7 +129,7 @@ def traits(messageDAO):
         resp = requests.get(url=url, params=params)
         data = json.loads(resp.content)
         traitname = data['name']
-        completemsg += traitname + " w/ rank: " + str(member['rank']) + "\n"
+        completemsg += traitname + " w/ rank: " + str(trait['rank']) + "\n"
     
     
-    return completemsg+"```"
+    return completemsg + "```"
