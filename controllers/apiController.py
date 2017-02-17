@@ -3,6 +3,7 @@ import json
 import asyncio
 from const import MISC
 from const import PATHS
+from const import TOKENS
 
 paramName = ""
 paramRealm = ""
@@ -44,7 +45,7 @@ def getIlvl(charParams):
     params = dict(
         fields="items",
         locale="en_GB",
-        apikey="rm4g62eungjsvppyupebwsubeafrb6a9"
+        apikey= TOKENS.BNET_API_KEY
     )
 
     resp = requests.get(url=url, params=params)
@@ -59,7 +60,7 @@ def getRelics(charParams):
     params = dict(
         fields="items",
         locale="en_GB",
-        apikey="rm4g62eungjsvppyupebwsubeafrb6a9"
+        apikey= TOKENS.BNET_API_KEY
     )
 
     resp = requests.get(url=url, params=params)
@@ -95,7 +96,7 @@ def getTraits(charParams):
     params = dict(
         fields="items",
         locale="en_GB",
-        apikey="rm4g62eungjsvppyupebwsubeafrb6a9"
+        apikey= TOKENS.BNET_API_KEY
     )
 
     resp = requests.get(url=url, params=params)
